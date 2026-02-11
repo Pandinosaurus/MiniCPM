@@ -16,6 +16,18 @@ Join our <a href="https://discord.gg/3cGQn9b3YM" target="_blank">discord</a> and
 <a href="https://mp.weixin.qq.com/s/KIhH2nCURBXuFXAtYRpuXg?poc_token=HBIsUWijxino8oJ5s6HcjcfXFRi0Xj2LJlxPYD9c">Join Us</a>
 </p>
 
+> [!NOTE]
+> ### 🏆 2026 Sparse Operator Acceleration & Race (SOAR) is Now Live!
+>
+> **The MiniCPM-SALA architecture is just the beginning. Realizing its full potential requires deep system-level synergy and cross-layer compilation optimization.**
+>
+> OpenBMB, in collaboration with **SGLang** and **NVIDIA**, invites global geeks to tackle the limits of **9B-scale, 1M-token inference** on a dedicated **NVIDIA 6000D** environment.
+>
+> * 💰 **Prize Pool:** >$100,000 USD (Top Prize: **$89,000**)
+> * 🚀 **Goal:** Optimize single and multi-batch performance via cross-layer compilation.
+>
+> 👉 **[Learn more and Register](https://soar.openbmb.cn/)**
+
 ## Changelog🔥
 - [2026.02.11] **[MiniCPM-SALA](https://huggingface.co/openbmb/MiniCPM-SALA)** is released! This is the first large-scale hybrid model effectively integrating sparse and linear attention for million-token context modeling. 🔥🔥🔥
 - [2025.09.29] **[InfLLM-V2 paper](https://arxiv.org/abs/2509.24663) is released!** We can train a sparse attention model with only 5B long-text tokens. 🔥🔥🔥
