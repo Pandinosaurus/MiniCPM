@@ -4,7 +4,7 @@
 
 <h4 align="center">
     <p>
-        <a href="https://github.com/OpenBMB/MiniCPM/blob/main/README.md">中文</a> | <b>English</b>
+        <a href="https://github.com/OpenBMB/MiniCPM/blob/main/README-cn.md">中文</a> | <b>English</b>
     <p>
 </h4>
 
@@ -16,14 +16,10 @@ Join our <a href="https://discord.gg/3cGQn9b3YM" target="_blank">discord</a> and
 <a href="https://mp.weixin.qq.com/s/KIhH2nCURBXuFXAtYRpuXg?poc_token=HBIsUWijxino8oJ5s6HcjcfXFRi0Xj2LJlxPYD9c">Join Us</a>
 </p>
 
-<div align="center">
-  <a href="https://www.youtube.com/watch?v=VouXjLHKDUY"><img src="https://img.youtube.com/vi/VouXjLHKDUY/0.jpg", width=70%></a>
-</div>
-
-
 ## Changelog🔥
+- [2026.02.11] **[MiniCPM-SALA](https://huggingface.co/openbmb/MiniCPM-SALA)** is released! This is the first large-scale hybrid model effectively integrating sparse and linear attention for million-token context modeling. 🔥🔥🔥
 - [2025.09.29] **[InfLLM-V2 paper](https://arxiv.org/abs/2509.24663) is released!** We can train a sparse attention model with only 5B long-text tokens. 🔥🔥🔥
-- [2025.09.05] **MiniCPM4.1 series are released! This series is a hybrid reasoning model with trainable sparse attention, which can be used in both deep reasoning mode and non-reasoning mode. 🔥🔥🔥**
+- [2025.09.05] **[MiniCPM4.1 series](https://huggingface.co/collections/openbmb/minicpm-4-6841ab29d180257e940baa9b)** are released! This series is a hybrid reasoning model with trainable sparse attention, which can be used in both deep reasoning mode and non-reasoning mode. 🔥🔥🔥
 - [2025.06.06] Released [**MiniCPM4**](https://huggingface.co/collections/openbmb/minicpm-4-6841ab29d180257e940baa9b)! This model achieves ultimate efficiency improvements while maintaining optimal performance at the same scale! It can achieve over 5x generation acceleration on typical end-side chips!
 - [2024.09.05] We release [**MiniCPM3-4B**](https://huggingface.co/openbmb/MiniCPM3-4B)! This model outperforms Phi-3.5-mini-instruct and GPT-3.5-Turbo-0125 and is comparable to several models with 7B-9B parameters like Llama3.1-8B-Instruct, Qwen2-7B-Instruct, and GLM-4-9B-Chat.
 - [2024.07.05] Released [**MiniCPM-S-1B**](https://huggingface.co/openbmb/MiniCPM-S-1B-sft)! This model achieves an average sparsity of 87.89% in the FFN layer, reducing FFN FLOPs by 84%, while maintaining downstream task performance.
@@ -35,6 +31,7 @@ Join our <a href="https://discord.gg/3cGQn9b3YM" target="_blank">discord</a> and
 - [Changelog🔥](#changelog)
 - [Quick Links](#quick-links)
 - [Model Downloads](#model-downloads)
+- [MiniCPM-SALA](#minicpm-sala)
 - [MiniCPM4 and MiniCPM4.1 Series](#minicpm4-and-minicpm41-series)
     - [Highlights](#highlights)
     - [Introduction](#introduction)
@@ -90,6 +87,7 @@ Join our <a href="https://discord.gg/3cGQn9b3YM" target="_blank">discord</a> and
 
   | HuggingFace | ModelScope |
   |-------------|------------|
+  | [MiniCPM-SALA](https://huggingface.co/openbmb/MiniCPM-SALA) | [MiniCPM-SALA](https://www.modelscope.cn/models/OpenBMB/MiniCPM-SALA) |
   | [MiniCPM4.1-8B](https://huggingface.co/openbmb/MiniCPM4.1-8B) | [MiniCPM4.1-8B](https://www.modelscope.cn/models/OpenBMB/MiniCPM4.1-8B) |
   | [MiniCPM4.1-8B-GPTQ](https://huggingface.co/openbmb/MiniCPM4.1-8B-GPTQ) | [MiniCPM4.1-8B-GPTQ](https://www.modelscope.cn/openbmb/MiniCPM4.1-8B-GPTQ) | 
   | [MiniCPM4.1-8B-AutoAWQ](https://huggingface.co/openbmb/MiniCPM4.1-8B-AutoAWQ) | [MiniCPM4.1-8B-AutoAWQ](https://www.modelscope.cn/openbmb/MiniCPM4.1-8B-AutoAWQ) | 
@@ -125,7 +123,190 @@ Join our <a href="https://discord.gg/3cGQn9b3YM" target="_blank">discord</a> and
   | [MiniCPM-S-1B](https://huggingface.co/openbmb/MiniCPM-S-1B-sft) | [MiniCPM-S-1B](https://modelscope.cn/models/OpenBMB/MiniCPM-S-1B-sft) |
 </details>
 
+## MiniCPM-SALA
+#### Highlights
+
+MiniCPM-SALA (Sparse Attention and Linear Attention) is the first large-scale hybrid model effectively integrating sparse and linear attention for million-token context modeling
+
+✅ Innovative Hybrid Architecture: Synergizes 25% Sparse Attention (InfLLM-v2) for high-fidelity long context modeling with 75% Linear Attention (Lightning Attention) for global efficiency.
+
+✅ Shattering Efficiency Walls: Breaks the "Compute Wall" and the "Memory Wall," achieving 3.5× inference speed and significantly lower KV-cache overhead compared to dense baselines. 
+
+✅ Million-Token Context: Empowered by HyPE (Hybrid Positional Embedding), it scales to 1M+ tokens while maintaining strong length generalization. 
+
+✅ HALO Adaptation: Utilizes Hybrid Attention via Layer Optimization (HALO), a novel distillation recipe that effectively transfers dense attention capabilities to the hybrid architecture, avoiding the severe performance degradation typical of pure linear models.
+
+#### Introduction
+
+MiniCPM-SALA is an efficient hybrid model in which 25% of the layers adopt [InfLLM-V2](https://arxiv.org/abs/2509.24663) and the remaining 75% utilize Lightning Attention. This architecture enables inference of one million tokens on consumer GPUs such as the NVIDIA RTX 5090.
+
+- **SALA Hybrid Attention Mechanism**
+  - Integrates 25% InfLLM-V2 and 75% Lightning Attention, effectively leveraging the granular focus of sparse attention for local details and the high efficiency of linear attention for broad context.
+
+- **Transformer-to-Hybrid Continue Training**
+  - Circumvents the inefficiencies of cold-start training by performing an architectural transformation on the pre-trained weights, thereby reducing the total training budget to approximately 25% relative to training a comparable model from scratch.
+
+- **[HyPE](https://arxiv.org/abs/2601.22156) (Hybrid Positional Encoding)**
+  - Harmonizes the performance across both short and long contexts, which can maintain general capabilities (e.g., knowledge, mathematics, and coding) comparable to modern full-attention models like Qwen3-8B and achieve substantial advantages across multiple long-context benchmarks.
+
+- **Efficient Inference on Long Sequences**
+  - Achieves up to 3.5x the inference speed of Qwen3-8B at a sequence length of 256K tokens on A6000D, supports inference at context lengths of up to 1M tokens on both NVIDIA A6000D and 5090 GPUs, whereas Qwen3-8B fails at this length due to out-of-memory (OOM) errors.
+
+### Evaluation Results
+
+#### Efficiency Evaluation
+
+We benchmarked MiniCPM-SALA (9B) against Qwen3-8B on NVIDIA A6000D and RTX 5090 GPUs to evaluate inference speed and memory efficiency. The results demonstrate a significant performance leap: MiniCPM-SALA not only achieves up to a 2.5x speedup in time-to-first-token (TTFT) but also overcomes the memory bottlenecks of full-attention architectures. While Qwen3-8B suffers from OOM errors at extended lengths, MiniCPM-SALA successfully scales to 1M-token contexts on a single consumer-grade RTX 5090, effectively democratizing ultra-long context inference on edge hardware.
+
+![inference_speed_a6000d](./assets/minicpm_sala/inference_speed_a600d.png)
+
+![inference_speed_5090](./assets/minicpm_sala/inference_speed_5090.png)
+
+#### Long-Context Evaluation
+
+MiniCPM-SALA consistently outperforms other open-source LLMs of similar scale across most involved long-context benchmarks. Specifically, it achieves the highest scores in the RULER and NoLiMa tests at all context lengths (up to 128K) and maintains the highest overall average score of 38.97, suggesting superior performance in handling long-context information processing.
+
+![long_text_evaluation](./assets/minicpm_sala/long_text_evaluation.png)
+
+#### Ultra-long Context Evaluation
+
+The evaluation demonstrates that MiniCPM-SALA exhibits effective length extrapolation capabilities, maintaining a score of 81.6 at a 2048K context length despite being trained on only 520K tokens. The model achieves this without auxiliary techniques like YaRN, likely due to its NoPE configuration in sparse attention layers.
+
+![ultra_long_text_evaluation](./assets/minicpm_sala/ultra_long_text_evaluation.png)
+
+#### Standard Evaluation
+
+MiniCPM-SALA achieves an average score of 76.53 across standard benchmarks, outperforming comparable models such as Qwen3-8B and Falcon-H1R-7B. The architecture maintains robust performance in Knowledge, Code, and Math.
+
+![benchmark](./assets/minicpm_sala/benchmark.png)
+
+### Inference
+
+To achieve optimal performance, we recommend using the `Temperature=0.9`.
+
+#### HuggingFace
+
+Our model is readily compatible with 🤗 Hugging Face transformers. You can perform inference with our model as follows:
+
+```python
+import torch
+from transformers import AutoModelForCausalLM, AutoTokenizer
+
+model_path = "openbmb/MiniCPM-SALA"
+tokenizer = AutoTokenizer.from_pretrained(model_path)
+model = AutoModelForCausalLM.from_pretrained(model_path, trust_remote_code=True, device_map="auto")
+model.eval()
+
+prompts = ["My name is", "The capital of China is"]
+with torch.no_grad():
+    inputs = tokenizer(prompts, return_tensors="pt").to(model.device)
+    outputs = model.generate(**inputs)
+output_texts = tokenizer.batch_decode(outputs)
+print(output_texts)
+```
+
+#### SGLang
+
+##### Requirements
+
+- CUDA 12.x or higher
+- `gcc` / `g++` compiler
+- `uv` package manager (script will check)
+
+##### Installation
+
+```bash
+# Clone repository
+git clone -b minicpm_sala https://github.com/OpenBMB/sglang.git
+cd sglang
+
+# One-click installation (creates venv and compiles all dependencies)
+bash install_minicpm_sala.sh
+
+# Or specify PyPI mirror
+bash install_minicpm_sala.sh https://mirrors.tuna.tsinghua.edu.cn/pypi/web/simple
+```
+
+The installation script performs the following steps:
+
+1. Creates `sglang_minicpm_sala_env` virtual environment (Python 3.12)
+2. Clones dependencies to `3rdparty/` (infllmv2) and initializes submodules (sparse_kernel)
+3. Installs MiniCPM-SALA (current repo)
+4. Compiles and installs `infllmv2_cuda_impl`
+5. Compiles and installs `sparse_kernel`
+6. Installs `tilelang` & `flash-linear-attention`
+
+##### Usage
+
+```bash
+# Activate environment
+source sglang_minicpm_sala_env/bin/activate
+
+# Launch Inference Server (Replace MODEL_PATH with actual path)
+MODEL_PATH=/path/to/your/MiniCPM-SALA
+
+python3 -m sglang.launch_server \
+    --model ${MODEL_PATH} \
+    --trust-remote-code \
+    --disable-radix-cache \
+    --attention-backend minicpm_flashinfer \
+    --chunked-prefill-size 8192 \
+    --max-running-requests 32 \
+    --skip-server-warmup \
+    --port 31111 \
+    --dense-as-sparse
+```
+
+| Parameter | Description |
+|-----------|-------------|
+| `--trust-remote-code` | Allow custom code in model |
+| `--disable-radix-cache` | Disable RadixAttention prefix cache |
+| `--attention-backend minicpm_flashinfer` | Use MiniCPM FlashInfer backend |
+| `--chunked-prefill-size 8192` | Chunked prefill size |
+| `--max-running-requests 32` | Max concurrent requests |
+| `--skip-server-warmup` | Skip server warmup |
+| `--port 31111` | Server port |
+| `--dense-as-sparse` | Use dense-as-sparse mode |
+
+##### Manual Installation
+
+If the script doesn't work for you, follow these steps:
+
+```bash
+# 0. Ensure uv is installed
+pip install uv
+
+# 1. Create venv
+uv venv --python 3.12 sglang_minicpm_sala_env
+source sglang_minicpm_sala_env/bin/activate
+
+# 2. Install SGLang
+uv pip install --upgrade pip setuptools wheel
+uv pip install -e ./python[all]
+
+# 3. Compile CUDA Extensions
+# (Ensure dependencies are cloned to 3rdparty/)
+cd 3rdparty/infllmv2_cuda_impl && python setup.py install && cd ../..
+cd 3rdparty/sparse_kernel && python setup.py install && cd ../..
+
+# 4. Install extra deps
+uv pip install tilelang flash-linear-attention
+```
+
+##### Q&A
+
+**Q: CUDA extension compilation failed?**
+
+- Ensure CUDA 12+ is installed (`nvcc --version`).
+- Ensure `gcc` / `g++` are available.
+- If `CXX` is set to `clang++ -pthread`, manually `export CXX=g++`.
+
 ## MiniCPM4 and MiniCPM4.1 Series
+
+<div align="center">
+  <a href="https://www.youtube.com/watch?v=VouXjLHKDUY"><img src="https://img.youtube.com/vi/VouXjLHKDUY/0.jpg", width=70%></a>
+</div>
+
 #### Highlights
 MiniCPM 4.1-8B is the first open-source reasoning LLM with trainable sparse attention:
 

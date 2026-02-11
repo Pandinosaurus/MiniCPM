@@ -4,7 +4,7 @@
 
 <h4 align="center">
     <p>
-        <b>中文</b> | <a href="https://github.com/OpenBMB/MiniCPM/blob/main/README-en.md">English</a>
+        <b>中文</b> | <a href="https://github.com/OpenBMB/MiniCPM/blob/main/README.md">English</a>
     <p>
 </h4>
 
@@ -17,11 +17,8 @@
 <a href="https://mp.weixin.qq.com/s/KIhH2nCURBXuFXAtYRpuXg?poc_token=HBIsUWijxino8oJ5s6HcjcfXFRi0Xj2LJlxPYD9c">加入我们</a>
 </p>
 
-<div align="center">
-  <a href="https://www.youtube.com/watch?v=VouXjLHKDUY"><img src="https://img.youtube.com/vi/VouXjLHKDUY/0.jpg", width=70%></a>
-</div>
-
 ## 更新日志🔥
+- [2026.02.11] **[MiniCPM-SALA](https://huggingface.co/openbmb/MiniCPM-SALA)** 发布！这是首个经过大规模实验验证的稀疏与线性混合注意力模型，支持百万词元的有效处理与高效推理。🔥🔥🔥
 - [2025.09.29] **发布 [InfLLM-V2详细技术论文](https://arxiv.org/abs/2509.24663)!**仅需5B长文本词元，即可完成稀疏注意力能力的训练🔥🔥🔥
 - [2025.09.05] **发布 [MiniCPM4.1](https://huggingface.co/collections/openbmb/minicpm-4-6841ab29d180257e940baa9b)！该模型基于原生稀疏注意力架构（InfLLM-V2），支持混合思考。🔥🔥🔥**
 - [2025.06.06] 发布 [MiniCPM4](https://huggingface.co/collections/openbmb/minicpm-4-6841ab29d180257e940baa9b)！该模型在保持同等规模最优性能的同时，实现了极致的效率提升！在典型端侧芯片上能够实现 5 倍以上生成加速！
@@ -35,6 +32,7 @@
 - [更新日志🔥](#更新日志)
 - [目录](#目录)
 - [模型下载](#模型下载)
+- [MiniCPM-SALA](#minicpm-sala)
 - [MiniCPM4 和 MiniCPM4.1 系列](#minicpm4-和-minicpm41-系列)
     - [亮点](#亮点)
     - [简介](#简介)
@@ -89,6 +87,7 @@
 
   | HuggingFace | ModelScope |
   |-------------|------------|
+  | [MiniCPM-SALA](https://huggingface.co/openbmb/MiniCPM-SALA) | [MiniCPM-SALA](https://www.modelscope.cn/models/OpenBMB/MiniCPM-SALA) |
   | [MiniCPM4.1-8B](https://huggingface.co/openbmb/MiniCPM4.1-8B) | [MiniCPM4.1-8B](https://www.modelscope.cn/models/OpenBMB/MiniCPM4.1-8B) |
   | [MiniCPM4.1-8B-GPTQ](https://huggingface.co/openbmb/MiniCPM4.1-8B-GPTQ) | [MiniCPM4.1-8B-GPTQ](https://www.modelscope.cn/openbmb/MiniCPM4.1-8B-GPTQ) | 
   | [MiniCPM4.1-8B-AutoAWQ](https://huggingface.co/openbmb/MiniCPM4.1-8B-AutoAWQ) | [MiniCPM4.1-8B-AutoAWQ](https://www.modelscope.cn/openbmb/MiniCPM4.1-8B-AutoAWQ) | 
@@ -124,7 +123,190 @@
   | [MiniCPM-S-1B](https://huggingface.co/openbmb/MiniCPM-S-1B-sft) | [MiniCPM-S-1B](https://modelscope.cn/models/OpenBMB/MiniCPM-S-1B-sft) |
 </details>
 
+## MiniCPM-SALA
+#### 亮点
+
+MiniCPM-SALA（稀疏注意力与线性注意力）是首个高效融合稀疏与线性注意力机制、支持百万令牌上下文建模的大规模混合模型
+
+✅ 创新混合架构：融合 25% 稀疏注意力（InfLLM-v2）实现高精度长文本建模，搭配 75% 线性注意力（Lightning Attention）保障全局处理效率。
+
+✅ 突破效率壁垒：打破“计算墙”与“内存墙”限制，相比密集注意力基线实现 3.5 倍推理加速，并显著降低KV缓存开销。
+
+✅ 百万令牌上下文：依托长上下文感知位置编码技术 HyPE，可扩展至 100 万+ 令牌容量，同时保持优异的长文本泛化能力。
+
+✅ HALO 适应机制：采用 HALO 分层优化混合注意力技术，通过创新的蒸馏方案将密集注意力能力有效迁移至混合架构，规避纯线性模型常见的严重性能衰减问题。
+
+#### 简介
+
+MiniCPM-SALA 是一种高效的混合模型，其中 25% 的层采用 [InfLLM-V2](https://arxiv.org/abs/2509.24663)，其余 75% 使用 Lightning Attention。这种架构能在 NVIDIA RTX 5090 等消费级 GPU 上进行一百万令牌（tokens）的推理。
+
+- **SALA 混合注意力机制**
+  - 整合了 25% 的 InfLLM-V2 和 75% 的 Lightning Attention，有效地利用了稀疏注意力对局部细节的细粒度聚焦，以及线性注意力对广泛上下文的高效率。
+
+- **Transformer 到混合架构的持续训练**
+  - 通过对预训练权重进行架构转换，规避了冷启动训练的低效性，从而将总训练预算降至从头训练同类模型的约 25%。
+
+- **[HyPE](https://arxiv.org/abs/2601.22156) (混合位置编码)**
+  - 协调了短上下文和长上下文的性能，能够保持与 Qwen3-8B 等现代全注意力模型相当的通用能力（如知识、数学和编程），并在多个长上下文基准测试中取得显著优势。
+
+- **长序列的高效推理**
+  - 在 NVIDIA A6000D 上、序列长度为 256K 令牌时，推理速度达到 Qwen3-8B 的 3.5 倍；支持在 NVIDIA A6000D 和 RTX 5090 GPU 上进行高达 1M 令牌的上下文长度推理，而 Qwen3-8B 在此长度下因显存溢出（OOM）而失败。
+
+### 评测结果
+
+#### 效率评测
+
+我们针对 MiniCPM-SALA (9B) 与 Qwen3-8B 在 NVIDIA A6000D 和 RTX 5090 GPU 上的表现进行了推理效率测试。MiniCPM-SALA 不仅在首字响应时间（TTFT）上实现了高达 2.5 倍的加速，还成功突破了全注意力机制架构的显存瓶颈。在超长文本处理中，Qwen3-8B 因显存溢出（OOM）而失败，而 MiniCPM-SALA 则能在单块消费级 RTX 5090 显卡上成功处理一百万词元的上下文，有望支持在边缘硬件上进行超长上下文推理。
+
+![inference_speed_a6000d](./assets/minicpm_sala/inference_speed_a600d.png)
+
+![inference_speed_5090](./assets/minicpm_sala/inference_speed_5090.png)
+
+#### 长文本评测
+
+在大多数长上下文基准测试中，MiniCPM-SALA 的表现始终优于所测试的其他同等规模的开源模型。具体而言，MiniCPM-SALA 在 RULER 和 NoLiMa 测试的所有长度范围（最高 128K）内均取得了最高分，并取得了 38.97 的最高综合平均分，表明其在长文本信息处理方面的强大性能。
+
+![long_text_evaluation](./assets/minicpm_sala/long_text_evaluation.png)
+
+#### 超长文本评测
+
+MiniCPM-SALA 展现出出色的长度外推能力。尽管其训练长度最长为 520K 词元，但在 2048K 的上下文长度下仍能保持 81.6 的高分。该模型无需借助 YaRN 等辅助技术即可实现有效外推，这可能得益于其在稀疏注意力层中采用的无位置编码（NoPE）配置，提升了模型长距离建模的能力。
+
+![ultra_long_text_evaluation](./assets/minicpm_sala/ultra_long_text_evaluation.png)
+
+#### 综合评测
+
+MiniCPM-SALA 在多项标准基准测试中的平均得分为 76.53，优于 Qwen3-8B 和 Falcon-H1R-7B 等同类模型。该架构在常识知识、代码生成及数学逻辑等维度均保持了稳健的性能表现。
+
+![benchmark](./assets/minicpm_sala/benchmark.png)
+
+### 推理
+
+为了获得最佳性能，我们建议使用 `Temperature=0.9`。
+
+#### HuggingFace
+
+我们的模型与 🤗 Hugging Face transformers 完全兼容。你可以通过以下代码进行推理：
+
+```python
+import torch
+from transformers import AutoModelForCausalLM, AutoTokenizer
+
+model_path = "openbmb/MiniCPM-SALA"
+tokenizer = AutoTokenizer.from_pretrained(model_path)
+model = AutoModelForCausalLM.from_pretrained(model_path, trust_remote_code=True, device_map="auto")
+model.eval()
+
+prompts = ["My name is", "The capital of China is"]
+with torch.no_grad():
+    inputs = tokenizer(prompts, return_tensors="pt").to(model.device)
+    outputs = model.generate(**inputs)
+output_texts = tokenizer.batch_decode(outputs)
+print(output_texts)
+```
+
+#### SGLang
+
+##### 环境要求
+
+- CUDA 12.x 或更高版本
+- `gcc` / `g++` 编译器
+- `uv` 包管理器（脚本会自动检测）
+
+##### 安装
+
+```bash
+# 克隆仓库
+git clone -b minicpm_sala https://github.com/OpenBMB/sglang.git
+cd sglang
+
+# 一键安装（自动创建虚拟环境并编译所有依赖）
+bash install_minicpm_sala.sh
+
+# 或指定 PyPI 镜像源
+bash install_minicpm_sala.sh https://mirrors.tuna.tsinghua.edu.cn/pypi/web/simple
+```
+
+安装脚本会自动完成以下步骤：
+
+1. 创建 `sglang_minicpm_sala_env` 虚拟环境（Python 3.12）
+2. 克隆依赖到 `3rdparty/` 目录 (infllmv2) 并初始化子模块 (sparse_kernel)
+3. 安装 MiniCPM-SALA (当前仓库)
+4. 编译安装 `infllmv2_cuda_impl`
+5. 编译安装 `sparse_kernel`
+6. 安装 `tilelang` 和 `flash-linear-attention`
+
+##### 使用
+
+```bash
+# 激活环境
+source sglang_minicpm_sala_env/bin/activate
+
+# 启动推理服务（将 MODEL_PATH 替换为实际模型路径）
+MODEL_PATH=/path/to/your/model
+
+python3 -m sglang.launch_server \
+    --model ${MODEL_PATH} \
+    --trust-remote-code \
+    --disable-radix-cache \
+    --attention-backend minicpm_flashinfer \
+    --chunked-prefill-size 8192 \
+    --max-running-requests 32 \
+    --skip-server-warmup \
+    --port 31111 \
+    --dense-as-sparse
+```
+
+| 参数 | 说明 |
+|------|------|
+| `--trust-remote-code` | 允许加载模型自带的自定义代码 |
+| `--disable-radix-cache` | 禁用 RadixAttention 前缀缓存 |
+| `--attention-backend minicpm_flashinfer` | 使用 MiniCPM FlashInfer 注意力后端 |
+| `--chunked-prefill-size 8192` | chunked prefill 大小 |
+| `--max-running-requests 32` | 最大并发推理请求数 |
+| `--skip-server-warmup` | 跳过服务预热 |
+| `--port 31111` | 服务端口 |
+| `--dense-as-sparse` | 使用 dense-as-sparse 模式 |
+
+##### 手动安装
+
+如果一键脚本不满足需求，可以分步执行：
+
+```bash
+# 0. 确保 uv 可用
+pip install uv
+
+# 1. 创建虚拟环境
+uv venv --python 3.12 sglang_minicpm_sala_env
+source sglang_minicpm_sala_env/bin/activate
+
+# 2. 安装 SGLang
+uv pip install --upgrade pip setuptools wheel
+uv pip install -e ./python[all]
+
+# 3. 编译安装 CUDA 扩展
+# (确保依赖已克隆到 3rdparty/ 目录)
+cd 3rdparty/infllmv2_cuda_impl && python setup.py install && cd ../..
+cd 3rdparty/sparse_kernel && python setup.py install && cd ../..
+
+# 4. 安装额外依赖
+uv pip install tilelang flash-linear-attention
+```
+
+##### Q&A
+
+**Q: CUDA 扩展编译失败怎么办？**
+
+- 确保系统安装了 CUDA 12 以上（`nvcc --version` 检查）。
+- 确保 `gcc` / `g++` 可用。
+- 如果 `CXX` 环境变量被设为 `clang++ -pthread`，手动 `export CXX=g++`。
+
 ## MiniCPM4 和 MiniCPM4.1 系列
+
+<div align="center">
+  <a href="https://www.youtube.com/watch?v=VouXjLHKDUY"><img src="https://img.youtube.com/vi/VouXjLHKDUY/0.jpg", width=70%></a>
+</div>
+
 #### 亮点
 MiniCPM4.1具有如下亮点：
 
@@ -711,7 +893,7 @@ MiniCPM4-MCP 是由[清华大学自然语言处理实验室（THUNLP）](https:/
 | Slack                 | 100.0          | 90.0         | 70.0         | 100.0         | 100.0        | 65.0         | 100.0          | 100.0        | 100.0        |
 | Whisper               | 90.0           | 90.0         | 90.0         | 90.0          | 90.0         | 90.0         | 90.0           | 90.0         | 30.0         |
 | **平均值**              | **80.2**       | **70.2**     | **49.1**     | **83.5**      | **67.7**     | **43.8**     | **88.3**       | **76.1**     | **51.2**     |
-  
+
 #### MiniCPM Intel AIPC Client: 端侧大模型客户端
 
 MiniCPM Intel AIPC Client 是面壁智能和 Intel 合作推出的端侧大模型客户端，专为搭载 Intel Core Ultra 系列处理器的设备设计，旨在为开发者、研究人员与 AI 爱好者带来低延迟、高效率、高隐私的本地大模型使用体验。其核心特性如下：
